@@ -7,7 +7,7 @@
 //#define rainDigital D1
 
 // for ESP32 Microcontroller
-//#define rainAnalog 35
+//#define rainAnalog 22
 #define rainDigital 23
 
 void setup() {

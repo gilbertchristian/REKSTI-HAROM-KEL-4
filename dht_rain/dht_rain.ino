@@ -2,8 +2,8 @@
 #define CAYENNE_PRINT Serial
 #include <CayenneMQTTESP32.h>
 #include "DHT.h"
-#define DHTPIN 4     // what digital pin we're connected to
-
+#define DHTPIN 4
+#define RAINPIN 23
 
 // Uncomment whatever type you're using!
 #define DHTTYPE DHT11   // DHT 11
@@ -21,10 +21,13 @@ DHT dht(DHTPIN, DHTTYPE);
 void setup() {
   Serial.begin(9600);
   dht.begin();
+  
   Cayenne.begin(username, password, clientID, ssid, wifiPassword);
-  //  pinMode (D4, OUTPUT);
+//  pinMode (D4, OUTPUT);
+  pinMode(RAINPIN,INPUT);
 }
 float h, t, f;
+int rain;
 void loop() {
   Cayenne.loop();
   h = dht.readHumidity();
@@ -33,6 +36,8 @@ void loop() {
   // Read temperature as Fahrenheit (isFahrenheit = true)
   f = dht.readTemperature(true);
   // Check if any reads failed and exit early (to try again).
+  rain = digitalRead(RAINPIN);
+  
   if (isnan(h) || isnan(t) || isnan(f)) {
     Serial.println("Failed to read from DHT sensor!");
     return;
@@ -52,4 +57,9 @@ CAYENNE_OUT(3)
 {
   CAYENNE_LOG("Send data for Virtual Channel %d Hum %f ", 3, h);
   Cayenne.virtualWrite(3, h);
+}
+CAYENNE_OUT(4)
+{
+  CAYENNE_LOG("Send data for Virtual Channel %d Hum %f ", 4, rain);
+  Cayenne.virtualWrite(4, rain);
 }
